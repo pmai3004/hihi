@@ -420,14 +420,12 @@
 </div>
 
 <script>
-    // ID Affiliate chính xác của bạn
+    // ID Affiliate của bạn
     const MY_AFFILIATE_ID = "17365550406"; 
     const FIXED_SUB_ID = "AFb"; 
 
-    async function convertLink() {
-        const inputField = document.getElementById('shopeeInput');
-        const input = inputField.value.trim();
-        const btn = document.querySelector('.convert-btn');
+    function convertLink() {
+        const input = document.getElementById('shopeeInput').value.trim();
         const resultBox = document.getElementById('resultBox');
         const affLinkDiv = document.getElementById('affLink');
 
@@ -436,57 +434,32 @@
             return;
         }
 
-        // Trạng thái đang xử lý để người dùng không bấm liên tục
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tối ưu hoa hồng...';
-        btn.disabled = true;
+        let finalLink = "";
 
-        try {
-            let finalUrl = input;
-
-            // Nếu là link rút gọn (vn.shp.ee hoặc shope.ee)
-            if (input.includes('shp.ee') || input.includes('shope.ee')) {
-                // Sử dụng Proxy để lấy link đích cuối cùng (Final Destination)
-                // Đây là bước quan trọng để biến vn.shp.ee thành shopee.vn/product/...
-                const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(input)}`);
-                const data = await response.json();
-                
-                if (data.status && data.status.url) {
-                    // Lấy link gốc và làm sạch (bỏ tham số thừa)
-                    finalUrl = data.status.url.split('?')[0]; 
-                } else {
-                    throw new Error("Không thể giải mã link");
-                }
-            } else {
-                // Nếu là link dài sẵn, chỉ cần lấy phần trước dấu "?"
-                finalUrl = input.split('?')[0];
-            }
-
-            // Tạo cấu trúc link an_redir CHUẨN 100% để nhận hoa hồng
-            const encodedUrl = encodeURIComponent(finalUrl);
-            const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
-
-            // Hiển thị kết quả
-            affLinkDiv.innerText = finalLink;
-            resultBox.style.display = 'block';
-            resultBox.scrollIntoView({ behavior: 'smooth' });
-
-        } catch (error) {
-            console.error("Lỗi:", error);
-            alert("Có lỗi khi giải mã link rút gọn. Bạn hãy thử mở link đó ra rồi copy link dài dán vào nhé!");
-        } finally {
-            btn.innerHTML = '<i class="fas fa-pencil-alt"></i> Tạo Link Ngay';
-            btn.disabled = false;
+        // Nếu người dùng dán link rút gọn (vn.shp.ee hoặc shope.ee)
+        if (input.includes('shp.ee') || input.includes('shope.ee')) {
+            // Cấu trúc này giúp Shopee tự động hiểu link rút gọn và gắn ID của bạn vào khi mở App
+            // Đây là cách duy nhất để xử lý link rút gọn mà không cần máy chủ giải mã
+            finalLink = `https://s.shopee.vn/universal-link?url=${encodeURIComponent(input)}&aff_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
+        } 
+        // Nếu người dùng dán link dài (shopee.vn/product/...)
+        else {
+            let cleanUrl = input.split('?')[0]; 
+            const encodedUrl = encodeURIComponent(cleanUrl);
+            finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
         }
+
+        // Hiển thị kết quả ngay tức thì
+        affLinkDiv.innerText = finalLink;
+        resultBox.style.display = 'block';
+        resultBox.scrollIntoView({ behavior: 'smooth' });
     }
 
     function copyLink() {
         const linkText = document.getElementById('affLink').innerText;
         if (!linkText) return;
-        
         navigator.clipboard.writeText(linkText).then(() => {
-            alert("Đã sao chép link Affiliate! Giờ hãy đi bình luận để nhận đơn nhé.");
-        }).catch(err => {
-            alert("Lỗi khi sao chép. Bạn hãy bôi đen link và copy thủ công nhé.");
+            alert("Đã sao chép link thành công!");
         });
     }
 </script>
