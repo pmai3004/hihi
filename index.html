@@ -420,7 +420,7 @@
 </div>
 
 <script>
-    // ID Affiliate chính xác của bạn
+    // ID Affiliate của bạn
     const MY_AFFILIATE_ID = "17365550406"; 
     const FIXED_SUB_ID = "AFb"; 
 
@@ -437,24 +437,23 @@
 
         let finalLink = "";
 
-        // XỬ LÝ 99% TRƯỜNG HỢP: Link rút gọn (vn.shp.ee hoặc shope.ee)
+        // XỬ LÝ LINK RÚT GỌN (vn.shp.ee / shope.ee)
         if (input.includes('shp.ee') || input.includes('shope.ee')) {
-            // Loại bỏ các tham số rác đằng sau dấu "?" nếu có để link sạch nhất
-            let baseLink = input.split('?')[0];
+            // Loại bỏ phần rác sau dấu ? nếu có
+            let cleanShortLink = input.split('?')[0];
             
-            // CÔNG THỨC VÀNG: Gắn tham số định danh Affiliate trực tiếp
-            // s.shopee.vn/universal-link là cổng ưu tiên mở App và ghi nhận đơn hàng
-            finalLink = `https://s.shopee.vn/universal-link?url=${encodeURIComponent(baseLink)}&aff_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
+            // CÔNG THỨC MỚI: Không lồng vào s.shopee.vn nữa để tránh 404
+            // Gắn trực tiếp tham số định danh vào đuôi link gốc
+            // App Shopee sẽ đọc aff_id và sub_id từ các tham số này để tính tiền cho bạn
+            finalLink = `${cleanShortLink}?smtt=0.0.9&aff_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
         } 
-        
-        // TRƯỜNG HỢP 1%: Người dùng dán link dài (shopee.vn/product/...)
+        // XỬ LÝ LINK DÀI (shopee.vn/product/...)
         else {
             let cleanUrl = input.split('?')[0]; 
             const encodedUrl = encodeURIComponent(cleanUrl);
             finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
         }
 
-        // Hiển thị kết quả ngay lập tức, không chờ đợi
         affLinkDiv.innerText = finalLink;
         resultBox.style.display = 'block';
         resultBox.scrollIntoView({ behavior: 'smooth' });
@@ -464,7 +463,7 @@
         const linkText = document.getElementById('affLink').innerText;
         if (!linkText) return;
         navigator.clipboard.writeText(linkText).then(() => {
-            alert("Đã sao chép link thành công!");
+            alert("Đã sao chép link Affiliate!");
         });
     }
 </script>
