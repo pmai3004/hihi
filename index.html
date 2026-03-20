@@ -424,27 +424,30 @@
     const FIXED_SUB_ID = "AFb"; 
 
     function convertLink() {
-        const input = document.getElementById('shopeeInput').value.trim();
-        if (!input) {
-            alert("Vui lòng dán link sản phẩm Shopee trước nhé!");
-            return;
-        }
-
-        // Bước 1: Rút gọn link gốc bằng cách chỉ lấy phần ID sản phẩm
-        // Xóa bỏ tất cả các tham số rác sau dấu "?" hoặc dấu " "
-        let cleanUrl = input.split('?')[0].split(' ')[0];
-        
-        // Bước 2: Mã hóa link đã làm sạch
-        const encodedUrl = encodeURIComponent(cleanUrl);
-        
-        // Bước 3: Tạo link Affiliate (Cấu trúc này là ngắn nhất có thể cho link an_redir)
-        const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
-
-        document.getElementById('affLink').innerText = finalLink;
-        document.getElementById('resultBox').style.display = 'block';
-        document.getElementById('resultBox').scrollIntoView({behavior: 'smooth'});
+    const input = document.getElementById('shopeeInput').value.trim();
+    if (!input) {
+        alert("Vui lòng dán link sản phẩm Shopee trước nhé!");
+        return;
     }
 
+    // Bước 1: Làm sạch link
+    // Chỉ giữ lại phần trước dấu "?" để loại bỏ các mã tracking gây lỗi 404
+    let cleanUrl = input.split('?')[0];
+
+    // Bước 2: Xử lý link rút gọn (nếu người dùng dán link dạng shope.ee)
+    // Với link shope.ee thì không nên split dấu '?' vì đó là mã định danh của nó
+    if (input.includes('shope.ee')) {
+        cleanUrl = input; 
+    }
+
+    // Bước 3: Mã hóa và tạo link cuối cùng
+    const encodedUrl = encodeURIComponent(cleanUrl);
+    const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
+
+    document.getElementById('affLink').innerText = finalLink;
+    document.getElementById('resultBox').style.display = 'block';
+    document.getElementById('resultBox').scrollIntoView({behavior: 'smooth'});
+}
     function copyLink() {
         const linkText = document.getElementById('affLink').innerText;
         if (!linkText) return;
