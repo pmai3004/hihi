@@ -426,22 +426,24 @@
     function convertLink() {
     const input = document.getElementById('shopeeInput').value.trim();
     if (!input) {
-        alert("Vui lòng dán link sản phẩm Shopee trước nhé!");
+        alert("Vui lòng dán link Shopee vào nhé!");
         return;
     }
 
-    // Bước 1: Làm sạch link
-    // Chỉ giữ lại phần trước dấu "?" để loại bỏ các mã tracking gây lỗi 404
-    let cleanUrl = input.split('?')[0];
+    let cleanUrl = "";
 
-    // Bước 2: Xử lý link rút gọn (nếu người dùng dán link dạng shope.ee)
-    // Với link shope.ee thì không nên split dấu '?' vì đó là mã định danh của nó
-    if (input.includes('shope.ee')) {
+    // Kiểm tra nếu là link rút gọn (vn.shp.ee hoặc shope.ee)
+    if (input.includes('shp.ee') || input.includes('shope.ee')) {
+        // Giữ nguyên toàn bộ link rút gọn vì nó không có tham số rác
         cleanUrl = input; 
+    } else {
+        // Nếu là link gốc, chỉ lấy phần trước dấu "?" để link ngắn và sạch nhất
+        cleanUrl = input.split('?')[0];
     }
-
-    // Bước 3: Mã hóa và tạo link cuối cùng
+    
     const encodedUrl = encodeURIComponent(cleanUrl);
+    
+    // Tạo link Affiliate cuối cùng
     const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
 
     document.getElementById('affLink').innerText = finalLink;
