@@ -420,7 +420,7 @@
 </div>
 
 <script>
-    // ID Affiliate của bạn
+    // ID Affiliate chính xác của bạn
     const MY_AFFILIATE_ID = "17365550406"; 
     const FIXED_SUB_ID = "AFb"; 
 
@@ -437,24 +437,24 @@
 
         let finalLink = "";
 
-        // TRƯỜNG HỢP 1: Người dùng dán link rút gọn (vn.shp.ee hoặc shope.ee)
+        // XỬ LÝ 99% TRƯỜNG HỢP: Link rút gọn (vn.shp.ee hoặc shope.ee)
         if (input.includes('shp.ee') || input.includes('shope.ee')) {
-            // Xóa bỏ các tham số rác nếu có trong link rút gọn
-            let cleanShortLink = input.split('?')[0];
+            // Loại bỏ các tham số rác đằng sau dấu "?" nếu có để link sạch nhất
+            let baseLink = input.split('?')[0];
             
-            // Cấu trúc gắn tham số Affiliate trực tiếp vào link rút gọn
-            // Cách này đảm bảo KHÔNG BAO GIỜ bị lỗi 404 vì nó giữ nguyên link gốc
-            // App Shopee sẽ tự quét aff_id ở đuôi để tính hoa hồng
-            finalLink = `${cleanShortLink}?smtt=0.0.9&aff_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
+            // CÔNG THỨC VÀNG: Gắn tham số định danh Affiliate trực tiếp
+            // s.shopee.vn/universal-link là cổng ưu tiên mở App và ghi nhận đơn hàng
+            finalLink = `https://s.shopee.vn/universal-link?url=${encodeURIComponent(baseLink)}&aff_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
         } 
         
-        // TRƯỜNG HỢP 2: Người dùng dán link dài (shopee.vn/product/...)
+        // TRƯỜNG HỢP 1%: Người dùng dán link dài (shopee.vn/product/...)
         else {
             let cleanUrl = input.split('?')[0]; 
             const encodedUrl = encodeURIComponent(cleanUrl);
             finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
         }
 
+        // Hiển thị kết quả ngay lập tức, không chờ đợi
         affLinkDiv.innerText = finalLink;
         resultBox.style.display = 'block';
         resultBox.scrollIntoView({ behavior: 'smooth' });
