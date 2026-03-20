@@ -453,7 +453,7 @@
         if (!linkText) return;
         
         navigator.clipboard.writeText(linkText).then(() => {
-            alert("Đã sao chép link thành công! Giờ hãy đi bình luận để săn mã nhé.");
+            alert("Sao chép link thành công!");
         }).catch(err => {
             alert("Lỗi khi sao chép link. Bạn vui lòng tự bôi đen và copy nhé.");
         });
