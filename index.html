@@ -425,7 +425,8 @@
     const FIXED_SUB_ID = "AFb"; 
 
     function convertLink() {
-        const input = document.getElementById('shopeeInput').value.trim();
+        const inputField = document.getElementById('shopeeInput');
+        let input = inputField.value.trim();
         const resultBox = document.getElementById('resultBox');
         const affLinkDiv = document.getElementById('affLink');
 
@@ -436,20 +437,24 @@
 
         let finalLink = "";
 
-        // Nếu người dùng dán link rút gọn (vn.shp.ee hoặc shope.ee)
+        // TRƯỜNG HỢP 1: Người dùng dán link rút gọn (vn.shp.ee hoặc shope.ee)
         if (input.includes('shp.ee') || input.includes('shope.ee')) {
-            // Cấu trúc này giúp Shopee tự động hiểu link rút gọn và gắn ID của bạn vào khi mở App
-            // Đây là cách duy nhất để xử lý link rút gọn mà không cần máy chủ giải mã
-            finalLink = `https://s.shopee.vn/universal-link?url=${encodeURIComponent(input)}&aff_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
+            // Xóa bỏ các tham số rác nếu có trong link rút gọn
+            let cleanShortLink = input.split('?')[0];
+            
+            // Cấu trúc gắn tham số Affiliate trực tiếp vào link rút gọn
+            // Cách này đảm bảo KHÔNG BAO GIỜ bị lỗi 404 vì nó giữ nguyên link gốc
+            // App Shopee sẽ tự quét aff_id ở đuôi để tính hoa hồng
+            finalLink = `${cleanShortLink}?smtt=0.0.9&aff_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
         } 
-        // Nếu người dùng dán link dài (shopee.vn/product/...)
+        
+        // TRƯỜNG HỢP 2: Người dùng dán link dài (shopee.vn/product/...)
         else {
             let cleanUrl = input.split('?')[0]; 
             const encodedUrl = encodeURIComponent(cleanUrl);
             finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
         }
 
-        // Hiển thị kết quả ngay tức thì
         affLinkDiv.innerText = finalLink;
         resultBox.style.display = 'block';
         resultBox.scrollIntoView({ behavior: 'smooth' });
