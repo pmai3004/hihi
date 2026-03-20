@@ -420,8 +420,8 @@
 </div>
 
 <script>
-    // Kiểm tra ID của bạn cho chính xác
-    const MY_AFFILIATE_ID = "17365550406"; 
+    // Kiểm tra kỹ ID của bạn (17382370178 hoặc 17365550406)
+    const MY_AFFILIATE_ID = "17382370178"; 
     const FIXED_SUB_ID = "AFb"; 
 
     function convertLink() {
@@ -430,26 +430,26 @@
         const affLinkDiv = document.getElementById('affLink');
 
         if (!input) {
-            alert("Vui lòng dán link Shopee trước nhé!");
+            alert("Vui lòng dán link Shopee vào nhé!");
             return;
         }
 
         let finalLink = "";
 
-        // TRƯỜNG HỢP 1: Nếu là link rút gọn (vn.shp.ee hoặc shope.ee)
+        // TRƯỜNG HỢP 1: Link rút gọn (vn.shp.ee hoặc shope.ee)
         if (input.includes('shp.ee') || input.includes('shope.ee')) {
-            // Sử dụng cổng universal-link: Shopee sẽ tự giải mã link này khi người dùng click
-            // Đây là cách NHANH NHẤT và KHÔNG BAO GIỜ LỖI 404
-            finalLink = `https://s.shopee.vn/universal-link?url=${encodeURIComponent(input)}&aff_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
+            // Cấu trúc Short Link chuẩn: KHÔNG dùng an_redir cho link rút gọn
+            // Dùng cấu trúc này để Shopee tự nhận diện ID và chuyển hướng app
+            finalLink = `${input}?smtt=0.0.9&aff_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
         } 
-        // TRƯỜNG HỢP 2: Nếu là link dài (shopee.vn/product...)
+        // TRƯỜNG HỢP 2: Link dài (shopee.vn/product/...)
         else {
             let cleanUrl = input.split('?')[0]; 
             const encodedUrl = encodeURIComponent(cleanUrl);
+            // Link dài thì bắt buộc dùng an_redir để đảm bảo hoa hồng
             finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
         }
 
-        // Hiển thị kết quả ngay lập tức (Tốc độ cực nhanh vì không phải chờ server)
         affLinkDiv.innerText = finalLink;
         resultBox.style.display = 'block';
         resultBox.scrollIntoView({ behavior: 'smooth' });
