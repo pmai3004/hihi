@@ -133,16 +133,27 @@
             color: #0056b3;
             font-size: 14px;
         }
+
+        /* NÚT SAO CHÉP - CẬP NHẬT THEO YÊU CẦU */
         .copy-btn { 
             width: 100%; 
             padding: 12px; 
-            background-color: #6c757d; 
-            color: white; 
-            border: none; 
+            background-color: white; /* Nền trắng */
+            color: #1877f2; /* Chữ xanh dương Facebook */
+            border: 2px solid #1877f2; /* Viền xanh */
             border-radius: 8px; 
             font-size: 14px; 
             cursor: pointer; 
             font-weight: 600;
+            transition: all 0.3s ease; /* Hiệu ứng mượt */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .copy-btn:hover {
+            background-color: #1877f2; /* Nền xanh dương khi đưa chuột vào */
+            color: white; /* Chữ trắng khi đưa chuột vào */
         }
 
         /* PHẦN HƯỚNG DẪN */
@@ -214,7 +225,6 @@
         }
         .step-text strong { color: #333; }
         
-        /* Link trong bước 3 */
         .step-text a {
             color: #0056b3;
             text-decoration: underline;
@@ -327,7 +337,7 @@
     <div class="result-box" id="resultBox">
         <div class="result-label">
             <i class="fas fa-check-circle"></i>
-            Thành công! Link tiếp thị của bạn:
+            Thành công! Bấm nút Sao chép link bên dưới:
         </div>
         <div class="link-wrapper" id="affLink"></div>
         <button class="copy-btn" onclick="copyLink()">
@@ -408,7 +418,7 @@
 
 <script>
     const MY_AFFILIATE_ID = "17365550406"; 
-    const FIXED_SUB_ID = "AFb"; // Cố định Sub ID là AFb
+    const FIXED_SUB_ID = "AFb"; 
 
     function convertLink() {
         const input = document.getElementById('shopeeInput').value.trim();
