@@ -343,6 +343,11 @@
         <button class="copy-btn" onclick="copyLink()">
             <i class="far fa-copy"></i> SAO CHÉP LINK
         </button>
+        <div id="goFbWrapper" style="display:none; margin-top:10px;">
+    <a href="https://www.facebook.com/share/p/17TctH8bAG/" target="_blank" class="fb-redirect-btn">
+        👉 Đi đến bài viết Facebook
+    </a>
+</div>
     </div>
 
     <div class="instructions-section">
@@ -463,12 +468,16 @@
     }
 }
     function copyLink() {
-        const linkText = document.getElementById('affLink').innerText;
-        if (!linkText) return;
-        navigator.clipboard.writeText(linkText).then(() => {
-            alert("Đã sao chép link!");
-        });
-    }
+    const linkText = document.getElementById('affLink').innerText;
+    if (!linkText) return;
+
+    navigator.clipboard.writeText(linkText).then(() => {
+        alert("Đã sao chép link!");
+
+        // 🔥 hiện nút Facebook
+        document.getElementById('goFbWrapper').style.display = 'block';
+    });
+}
 </script>
 </body>
 </html>
