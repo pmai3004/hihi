@@ -134,26 +134,26 @@
             font-size: 14px;
         }
 
-        /* NÚT SAO CHÉP - CẬP NHẬT THEO YÊU CẦU */
+        /* NÚT SAO CHÉP */
         .copy-btn { 
             width: 100%; 
             padding: 12px; 
-            background-color: white; /* Nền trắng */
-            color: #1877f2; /* Chữ xanh dương Facebook */
-            border: 2px solid #1877f2; /* Viền xanh */
+            background-color: white;
+            color: #1877f2;
+            border: 2px solid #1877f2;
             border-radius: 8px; 
             font-size: 14px; 
             cursor: pointer; 
             font-weight: 600;
-            transition: all 0.3s ease; /* Hiệu ứng mượt */
+            transition: all 0.3s ease;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 8px;
         }
         .copy-btn:hover {
-            background-color: #1877f2; /* Nền xanh dương khi đưa chuột vào */
-            color: white; /* Chữ trắng khi đưa chuột vào */
+            background-color: #1877f2;
+            color: white;
         }
 
         /* PHẦN HƯỚNG DẪN */
@@ -292,7 +292,6 @@
             padding-top: 20px;
             text-align: center;
         }
-        .social-title { color: #333; font-weight: bold; margin-bottom: 15px; }
         .social-btn {
             display: inline-flex;
             align-items: center;
@@ -420,9 +419,9 @@
 </div>
 
 <script>
-    // ID Affiliate của bạn
+    // CẤU HÌNH THÔNG SỐ
     const MY_AFFILIATE_ID = "17365550406"; 
-    const FIXED_SUB_ID = "test0"; 
+    const FIXED_SUB_ID = "test0"; // Cập nhật sang test2 theo yêu cầu
 
     function convertLink() {
         const inputField = document.getElementById('shopeeInput');
@@ -435,24 +434,12 @@
             return;
         }
 
-        let finalLink = "";
-
-        // XỬ LÝ LINK RÚT GỌN (vn.shp.ee / shope.ee)
-        if (input.includes('shp.ee') || input.includes('shope.ee')) {
-            // Loại bỏ phần rác sau dấu ? nếu có
-            let cleanShortLink = input.split('?')[0];
-            
-            // CÔNG THỨC MỚI: Không lồng vào s.shopee.vn nữa để tránh 404
-            // Gắn trực tiếp tham số định danh vào đuôi link gốc
-            // App Shopee sẽ đọc aff_id và sub_id từ các tham số này để tính tiền cho bạn
-            finalLink = `${cleanShortLink}?smtt=0.0.9&aff_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
-        } 
-        // XỬ LÝ LINK DÀI (shopee.vn/product/...)
-        else {
-            let cleanUrl = input.split('?')[0]; 
-            const encodedUrl = encodeURIComponent(cleanUrl);
-            finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
-        }
+        // Xử lý link sạch (bỏ tham số rác sau dấu ?)
+        let cleanUrl = input.split('?')[0]; 
+        
+        // Luôn sử dụng cấu trúc an_redir để đảm bảo link nhảy s.shopee.vn và mở app ổn định
+        const encodedUrl = encodeURIComponent(cleanUrl);
+        const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
 
         affLinkDiv.innerText = finalLink;
         resultBox.style.display = 'block';
