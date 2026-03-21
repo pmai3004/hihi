@@ -419,6 +419,7 @@
 </div>
 
 <script>
+    fetch("https://shopee-resolve.onrender.com/ping");
     const MY_AFFILIATE_ID = "17365550406"; 
     const FIXED_SUB_ID = "test0"; 
 
@@ -433,34 +434,34 @@
         return;
     }
 
-    // ✅ Không cắt query nữa
-    let cleanUrl = input;
-
-    // 🔥 Detect link rút gọn shp.ee
-    if (cleanUrl.includes("shp.ee")) {
-        // ⚠️ Vì không có backend nên không resolve được
-        affLinkDiv.innerText = "⚠️ Link bạn dán là link rút gọn (shp.ee).\n👉 Hãy bấm mở link đó, sau đó copy lại link đầy đủ (shopee.vn) rồi dán lại giúp mình!";
-        
+    try {
+        // 🔥 loading
+        affLinkDiv.innerText = "⏳ Đang xử lý link...";
         resultBox.style.display = 'block';
-        resultBox.scrollIntoView({ behavior: 'smooth' });
-        return;
+
+        // 🔥 GỌI BACKEND của bạn
+        const res = await fetch("https://shopee-resolve.onrender.com/resolve", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ url: input })
+        });
+
+        const data = await res.json();
+
+        if (!data.finalUrl) throw new Error();
+
+        const encodedUrl = encodeURIComponent(data.finalUrl);
+
+        const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
+
+        affLinkDiv.innerText = finalLink;
+
+    } catch (err) {
+        affLinkDiv.innerText = "❌ Không xử lý được link!";
     }
-
-    // ✅ Validate cơ bản
-    if (!cleanUrl.includes("shopee.vn")) {
-        alert("Link không hợp lệ! Vui lòng nhập link Shopee.");
-        return;
-    }
-
-    const encodedUrl = encodeURIComponent(cleanUrl);
-
-    const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
-
-    affLinkDiv.innerText = finalLink;
-    resultBox.style.display = 'block';
-    resultBox.scrollIntoView({ behavior: 'smooth' });
 }
-
     function copyLink() {
         const linkText = document.getElementById('affLink').innerText;
         if (!linkText) return;
