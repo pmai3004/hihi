@@ -422,30 +422,44 @@
     const MY_AFFILIATE_ID = "17365550406"; 
     const FIXED_SUB_ID = "test0"; 
 
-    function convertLink() {
-        const inputField = document.getElementById('shopeeInput');
-        let input = inputField.value.trim();
-        const resultBox = document.getElementById('resultBox');
-        const affLinkDiv = document.getElementById('affLink');
+    async function convertLink() {
+    const inputField = document.getElementById('shopeeInput');
+    let input = inputField.value.trim();
+    const resultBox = document.getElementById('resultBox');
+    const affLinkDiv = document.getElementById('affLink');
 
-        if (!input) {
-            alert("Vui lòng dán link Shopee vào nhé!");
-            return;
-        }
+    if (!input) {
+        alert("Vui lòng dán link Shopee vào nhé!");
+        return;
+    }
 
-        // XỬ LÝ CHUNG CHO TẤT CẢ CÁC LOẠI LINK (DÀI, NGẮN, SHP.EE)
-        // Loại bỏ các tham số rác sau dấu ? để lấy link gốc sạch nhất
-        let cleanUrl = input.split('?')[0]; 
+    // ✅ Không cắt query nữa
+    let cleanUrl = input;
+
+    // 🔥 Detect link rút gọn shp.ee
+    if (cleanUrl.includes("shp.ee")) {
+        // ⚠️ Vì không có backend nên không resolve được
+        affLinkDiv.innerText = "⚠️ Link bạn dán là link rút gọn (shp.ee).\n👉 Hãy bấm mở link đó, sau đó copy lại link đầy đủ (shopee.vn) rồi dán lại giúp mình!";
         
-        // Sử dụng cấu trúc an_redir là cách an toàn nhất của Shopee Affiliate
-        // Nó sẽ tự động giải mã link shp.ee và chuyển hướng kèm ID của bạn mà không bị lỗi 404
-        const encodedUrl = encodeURIComponent(cleanUrl);
-        const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
-
-        affLinkDiv.innerText = finalLink;
         resultBox.style.display = 'block';
         resultBox.scrollIntoView({ behavior: 'smooth' });
+        return;
     }
+
+    // ✅ Validate cơ bản
+    if (!cleanUrl.includes("shopee.vn")) {
+        alert("Link không hợp lệ! Vui lòng nhập link Shopee.");
+        return;
+    }
+
+    const encodedUrl = encodeURIComponent(cleanUrl);
+
+    const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
+
+    affLinkDiv.innerText = finalLink;
+    resultBox.style.display = 'block';
+    resultBox.scrollIntoView({ behavior: 'smooth' });
+}
 
     function copyLink() {
         const linkText = document.getElementById('affLink').innerText;
