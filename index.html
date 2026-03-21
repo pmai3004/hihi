@@ -419,9 +419,8 @@
 </div>
 
 <script>
-    // CẤU HÌNH THÔNG SỐ
     const MY_AFFILIATE_ID = "17365550406"; 
-    const FIXED_SUB_ID = "test0"; // Cập nhật sang test2 theo yêu cầu
+    const FIXED_SUB_ID = "test0"; 
 
     function convertLink() {
         const inputField = document.getElementById('shopeeInput');
@@ -434,10 +433,12 @@
             return;
         }
 
-        // Xử lý link sạch (bỏ tham số rác sau dấu ?)
+        // XỬ LÝ CHUNG CHO TẤT CẢ CÁC LOẠI LINK (DÀI, NGẮN, SHP.EE)
+        // Loại bỏ các tham số rác sau dấu ? để lấy link gốc sạch nhất
         let cleanUrl = input.split('?')[0]; 
         
-        // Luôn sử dụng cấu trúc an_redir để đảm bảo link nhảy s.shopee.vn và mở app ổn định
+        // Sử dụng cấu trúc an_redir là cách an toàn nhất của Shopee Affiliate
+        // Nó sẽ tự động giải mã link shp.ee và chuyển hướng kèm ID của bạn mà không bị lỗi 404
         const encodedUrl = encodeURIComponent(cleanUrl);
         const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
 
