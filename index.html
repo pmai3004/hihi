@@ -514,38 +514,30 @@
 
             const res = await fetch("https://shopee-resolve.onrender.com/resolve", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ url: input })
             });
 
             const data = await res.json();
-
             if (!data.finalUrl) throw new Error();
 
-            // BƯỚC 1: Lấy link gốc sạch (Loại bỏ các tham số cũ để tránh lỗi không hợp lệ)
+            // BƯỚC QUAN TRỌNG: Chỉ lấy phần link gốc, bỏ sạch ?sp_atk, ?smtt... 
+            // Giữ nguyên cấu trúc /product/ hoặc /ten-shop/ vì Shopee Affiliate cần nó để định danh
             let cleanUrl = data.finalUrl.split('?')[0];
 
-            // BƯỚC 2: Xử lý định dạng /product/ thành /i/ để đảm bảo dẫn đúng trang sản phẩm
-            // Cách này giúp link nhẹ hơn và hệ thống Shopee nhận diện tốt hơn như link mẫu bạn gửi
-            if (cleanUrl.includes("shopee.vn/product/")) {
-                cleanUrl = cleanUrl.replace("shopee.vn/product/", "shopee.vn/i/");
-            }
-
+            // Mã hóa link sạch này
             const encodedUrl = encodeURIComponent(cleanUrl);
 
-            // BƯỚC 3: Tạo link final với đầy đủ tham số như các mẫu thành công
+            // Ghép vào cấu trúc an_redir chuẩn
+            // Thêm share_channel_code=4 để tăng tỷ lệ mở App thành công
             const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&share_channel_code=4&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
 
-            // BƯỚC 4: Hiển thị lên giao diện
             affLinkDiv.innerText = finalLink;
 
         } catch (err) {
             affLinkDiv.innerText = "❌ Không xử lý được link!";
         }
     }
-
     function copyLink() {
         const affLinkDiv = document.getElementById('affLink');
         const linkText = affLinkDiv.innerText || affLinkDiv.textContent;
