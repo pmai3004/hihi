@@ -447,44 +447,37 @@
     const FIXED_SUB_ID = "test0"; 
 
     async function convertLink() {
-    const inputField = document.getElementById('shopeeInput');
-    let input = inputField.value.trim();
-    const resultBox = document.getElementById('resultBox');
-    const affLinkDiv = document.getElementById('affLink');
+        // ... (giữ nguyên phần khai báo biến đầu hàm)
 
-    if (!input) {
-        alert("Vui lòng dán link Shopee vào nhé!");
-        return;
+        try {
+            affLinkDiv.innerText = "⏳ Đang xử lý link...";
+            resultBox.style.display = 'block';
+
+            const res = await fetch("https://shopee-resolve.onrender.com/resolve", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url: input })
+            });
+
+            const data = await res.json();
+            if (!data.finalUrl) throw new Error();
+
+            // 🛠 SỬA LỖI TẠI ĐÂY:
+            // 1. Chỉ lấy link sản phẩm sạch (bỏ sạch sp_atk, smtt...)
+            let cleanUrl = data.finalUrl.split('?')[0];
+            
+            // 2. Mã hóa link sạch
+            const encodedUrl = encodeURIComponent(cleanUrl);
+
+            // 3. THÊM share_channel_code=4 để kích hoạt mã giảm giá FB
+            const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&share_channel_code=4&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
+
+            affLinkDiv.innerText = finalLink;
+
+        } catch (err) {
+            affLinkDiv.innerText = "❌ Không xử lý được link!";
+        }
     }
-
-    try {
-        // 🔥 loading
-        affLinkDiv.innerText = "⏳ Đang xử lý link...";
-        resultBox.style.display = 'block';
-
-        // 🔥 GỌI BACKEND của bạn
-        const res = await fetch("https://shopee-resolve.onrender.com/resolve", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ url: input })
-        });
-
-        const data = await res.json();
-
-        if (!data.finalUrl) throw new Error();
-
-        const encodedUrl = encodeURIComponent(data.finalUrl);
-
-        const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
-
-        affLinkDiv.innerText = finalLink;
-
-    } catch (err) {
-        affLinkDiv.innerText = "❌ Không xử lý được link!";
-    }
-}
     function copyLink() {
     const linkText = document.getElementById('affLink').innerText;
     if (!linkText) return;
