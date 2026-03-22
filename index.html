@@ -502,7 +502,6 @@
         let input = inputField.value.trim();
         const resultBox = document.getElementById('resultBox');
         const affLinkDiv = document.getElementById('affLink');
-        const goShopeeBtn = document.getElementById('goShopeeBtn');
 
         if (!input) {
             alert("Vui lòng dán link Shopee vào nhé!");
@@ -512,39 +511,38 @@
         try {
             affLinkDiv.innerText = "⏳ Đang xử lý link...";
             resultBox.style.display = 'block';
-            goShopeeBtn.style.display = 'none';
 
             const res = await fetch("https://shopee-resolve.onrender.com/resolve", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({ url: input })
             });
 
             const data = await res.json();
+
             if (!data.finalUrl) throw new Error();
 
-            // 1. Lấy link sạch không có tham số ?
-            let cleanUrl = data.finalUrl.split('?')[0]; 
+            // BƯỚC 1: Lấy link gốc sạch (Loại bỏ các tham số cũ để tránh lỗi không hợp lệ)
+            let cleanUrl = data.finalUrl.split('?')[0];
 
-            // 2. XỬ LÝ QUAN TRỌNG: Loại bỏ chữ /product/ để link hợp lệ
-            // Thay vì dùng universal-link, ta chuyển đổi /product/ thành /i/ 
-            // Hoặc giữ nguyên ID Shop và ID Sản phẩm (Shopee vẫn nhận diện được hoa hồng)
+            // BƯỚC 2: Xử lý định dạng /product/ thành /i/ để đảm bảo dẫn đúng trang sản phẩm
+            // Cách này giúp link nhẹ hơn và hệ thống Shopee nhận diện tốt hơn như link mẫu bạn gửi
             if (cleanUrl.includes("shopee.vn/product/")) {
                 cleanUrl = cleanUrl.replace("shopee.vn/product/", "shopee.vn/i/");
             }
 
             const encodedUrl = encodeURIComponent(cleanUrl);
-            
-            // 3. Ghép đúng cấu trúc 3 mẫu thành công bạn gửi
-            // Dùng share_channel_code=4 để định danh "Copy Link"
+
+            // BƯỚC 3: Tạo link final với đầy đủ tham số như các mẫu thành công
             const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&share_channel_code=4&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
 
-            affLinkDiv.innerHTML = `<a href="${finalLink}" target="_blank">${finalLink}</a>`;
-            goShopeeBtn.href = finalLink;
-            goShopeeBtn.style.display = 'flex';
+            // BƯỚC 4: Hiển thị lên giao diện
+            affLinkDiv.innerText = finalLink;
 
         } catch (err) {
-            affLinkDiv.innerText = "❌ Lỗi: Link không được hỗ trợ!";
+            affLinkDiv.innerText = "❌ Không xử lý được link!";
         }
     }
 
