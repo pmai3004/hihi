@@ -521,26 +521,28 @@
             const data = await res.json();
             if (!data.finalUrl) throw new Error();
 
-            // BƯỚC 1: Tối ưu link gốc (Chỉ lấy ID để Shopee nhận diện Affiliate dễ nhất)
-            // Biến: shopee.vn/product/123/456?abc... thành shopee.vn/product/123/456
+            // BƯỚC 1: Làm sạch link và lấy phần đường dẫn chính
             let cleanUrl = data.finalUrl.split('?')[0];
 
-            // BƯỚC 2: Ép định dạng link sản phẩm chuẩn (giống mẫu thành công của bạn)
-            // Chuyển đổi từ dạng /product/ sang dạng trực tiếp /id_shop/id_sp
+            // BƯỚC 2: Xử lý quan trọng để tránh bị về trang chủ
+            // Nếu link có dạng /product/ID_SHOP/ID_SP, Shopee Affiliate đôi khi bị lỗi điều hướng.
+            // Ta chuyển nó về dạng chuẩn: shopee.vn/product-i.ID_SHOP.ID_SP
             if (cleanUrl.includes("shopee.vn/product/")) {
-                cleanUrl = cleanUrl.replace("shopee.vn/product/", "shopee.vn/universal-link/");
+                const parts = cleanUrl.split('/');
+                const productId = parts.pop();
+                const shopId = parts.pop();
+                cleanUrl = `https://shopee.vn/product-i.${shopId}.${productId}`;
             }
 
             const encodedUrl = encodeURIComponent(cleanUrl);
 
-            // BƯỚC 3: Cấu trúc link Affiliate SIÊU CHUẨN (Thứ tự tham số rất quan trọng)
-            // Thêm share_channel_code=4 để hệ thống ghi nhận là link chia sẻ Affiliate
+            // BƯỚC 3: Tạo link Affiliate với tham số share_channel_code=4 (giống mẫu thành công)
             const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&share_channel_code=4&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
 
             affLinkDiv.innerText = finalLink;
 
         } catch (err) {
-            affLinkDiv.innerText = "❌ Không xử lý được link!";
+            affLinkDiv.innerText = "❌ Lỗi: Link không xác định!";
         }
     }
     function copyLink() {
