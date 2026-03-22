@@ -523,12 +523,16 @@
             const data = await res.json();
             if (!data.finalUrl) throw new Error();
 
-            const encodedUrl = encodeURIComponent(data.finalUrl);
+            // Loại bỏ các tham số rác hoặc ID affiliate của người khác (nếu có)
+            let cleanUrl = data.finalUrl.split('?')[0]; 
+
+            const encodedUrl = encodeURIComponent(cleanUrl);
             const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
 
             affLinkDiv.innerHTML = `<a href="${finalLink}" target="_blank">${finalLink}</a>`;
             goShopeeBtn.href = finalLink;
             goShopeeBtn.style.display = 'flex';
+            // --- KẾT THÚC ĐOẠN THAY THẾ ---
 
         } catch (err) {
             affLinkDiv.innerText = "❌ Không xử lý được link!";
