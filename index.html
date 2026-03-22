@@ -442,12 +442,23 @@
 </div>
 
 <script>
+    // Giữ nguyên các dòng này
     fetch("https://shopee-resolve.onrender.com/ping");
     const MY_AFFILIATE_ID = "17365550406"; 
     const FIXED_SUB_ID = "test0"; 
 
     async function convertLink() {
-        // ... (giữ nguyên phần khai báo biến đầu hàm)
+        // --- ĐÂY LÀ PHẦN BỊ THIẾU KHIẾN NÚT KHÔNG CHẠY ---
+        const inputField = document.getElementById('shopeeInput');
+        const resultBox = document.getElementById('resultBox');
+        const affLinkDiv = document.getElementById('affLink');
+        let input = inputField.value.trim();
+
+        if (!input) {
+            alert("Vui lòng dán link Shopee vào nhé!");
+            return;
+        }
+        // -----------------------------------------------
 
         try {
             affLinkDiv.innerText = "⏳ Đang xử lý link...";
@@ -462,14 +473,9 @@
             const data = await res.json();
             if (!data.finalUrl) throw new Error();
 
-            // 🛠 SỬA LỖI TẠI ĐÂY:
-            // 1. Chỉ lấy link sản phẩm sạch (bỏ sạch sp_atk, smtt...)
+            // Sửa lỗi link: Bỏ rác và thêm mã FB
             let cleanUrl = data.finalUrl.split('?')[0];
-            
-            // 2. Mã hóa link sạch
             const encodedUrl = encodeURIComponent(cleanUrl);
-
-            // 3. THÊM share_channel_code=4 để kích hoạt mã giảm giá FB
             const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&share_channel_code=4&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
 
             affLinkDiv.innerText = finalLink;
@@ -478,23 +484,23 @@
             affLinkDiv.innerText = "❌ Không xử lý được link!";
         }
     }
+
     function copyLink() {
-    const linkText = document.getElementById('affLink').innerText;
-    if (!linkText) return;
+        const linkText = document.getElementById('affLink').innerText;
+        if (!linkText || linkText.includes("⏳")) return;
 
-    navigator.clipboard.writeText(linkText).then(() => {
-        const toast = document.getElementById("toastCopy");
-toast.style.display = "block";
+        navigator.clipboard.writeText(linkText).then(() => {
+            const toast = document.getElementById("toastCopy");
+            if(toast) toast.style.display = "block";
 
-// tự ẩn sau 3 giây
-setTimeout(() => {
-    toast.style.display = "none";
-}, 3000);
+            setTimeout(() => {
+                if(toast) toast.style.display = "none";
+            }, 3000);
 
-        // 🔥 hiện nút Facebook
-        document.getElementById('goFbWrapper').style.display = 'block';
-    });
-}
+            const goFb = document.getElementById('goFbWrapper');
+            if(goFb) goFb.style.display = 'block';
+        });
+    }
 </script>
 <div id="toastCopy" style="
     position: fixed;
