@@ -1,22 +1,96 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F5H6TKDJ4J"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kèo Thơm - Tạo Link Shopee</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-  gtag('config', 'G-F5H6TKDJ4J');
-</script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F5H6TKDJ4J"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+<style>
+body { 
+    font-family: system-ui;
+    background-color: #f7b7a3; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; 
+}
 
-  gtag('config', 'G-F5H6TKDJ4J');
-</script>
+.container { 
+    background: white; 
+    padding: 35px; 
+    border-radius: 24px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+    max-width: 600px; 
+    width: 100%;
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+}
+
+.convert-btn {
+    width: 100%;
+    padding: 15px;
+    background: #ee4d2d;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.result-box {
+    margin-top: 20px;
+    display: none;
+}
+
+.link-wrapper {
+    background: #f1f1f1;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
+    word-break: break-all;
+}
+
+.copy-btn {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #1877f2;
+    background: white;
+    color: #1877f2;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* 🔥 TOAST */
+#toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    z-index: 9999;
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.toast-link {
+    color: #4da6ff;
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kèo Thơm - Tạo Link Shopee</title>
@@ -75,7 +149,6 @@
         /* PHẦN NHẬP LIỆU */
         .input-group { 
             margin-bottom: 20px; 
-            position: relative; /* Thêm để định vị nút X */
         }
         .input-label {
             color: #333;
@@ -90,7 +163,6 @@
         input { 
             width: 100%; 
             padding: 18px; 
-            padding-right: 45px; /* Chừa chỗ cho nút X */
             border: 1.5px solid #e0e0e0; 
             border-radius: 12px; 
             box-sizing: border-box; 
@@ -103,18 +175,6 @@
             outline: none;
             background-color: white;
             box-shadow: 0 0 0 3px rgba(238, 77, 45, 0.1);
-        }
-
-        /* Thêm Nút X xóa nhanh */
-        .clear-btn {
-            position: absolute;
-            right: 15px;
-            top: 52px;
-            color: #ccc;
-            cursor: pointer;
-            display: none;
-            font-size: 20px;
-            z-index: 10;
         }
 
         /* NÚT TẠO LINK */
@@ -161,10 +221,9 @@
             border: 1px solid #e0e0e0;
             word-break: break-all;
             margin-bottom: 15px;
+            color: #0056b3;
             font-size: 14px;
         }
-        /* Style cho link có thể bấm được */
-        .link-wrapper a { color: #0056b3; text-decoration: none; font-weight: 500; }
 
         /* NÚT SAO CHÉP */
         .copy-btn { 
@@ -182,32 +241,11 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
-            height: 46px; /* Cố định chiều cao */
-            box-sizing: border-box;
-            margin-bottom: 10px;
         }
-        .copy-btn:hover { background-color: #1877f2; color: white; }
-
-        /* NÚT ĐẾN SHOPEE NGAY - Cùng kích thước nút sao chép */
-        .go-shopee-btn {
-            width: 100%;
-            height: 46px;
-            background-color: #ee4d2d;
+        .copy-btn:hover {
+            background-color: #1877f2;
             color: white;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            display: none; /* Hiện khi tạo xong link */
-            justify-content: center;
-            align-items: center;
-            text-decoration: none;
-            gap: 8px;
-            border: none;
-            transition: 0.3s;
-            box-sizing: border-box;
-            margin-bottom: 10px;
         }
-        .go-shopee-btn:hover { background-color: #d73211; }
 
         /* PHẦN HƯỚNG DẪN */
         .instructions-section {
@@ -302,7 +340,10 @@
             font-size: 16px;
             transition: 0.3s;
         }
-        .fb-redirect-btn:hover { background-color: #0056b3; color: white; }
+        .fb-redirect-btn:hover {
+            background-color: #0056b3;
+            color: white;
+        }
 
         .footer-info {
             margin-top: 30px;
@@ -362,9 +403,13 @@
 
     </style>
 </head>
+
 <body>
 
 <div class="container">
+    <h2 style="text-align:center;color:#ee4d2d">Tạo Link Shopee</h2>
+
+    <input type="text" id="shopeeInput" placeholder="Dán link Shopee...">
     <div class="header">
         <i class="fas fa-magic"></i>
         <h1>Tạo Link Shopee</h1>
@@ -376,37 +421,40 @@
             <i class="fas fa-link"></i>
             Dán link sản phẩm Shopee vào đây
         </label>
-        <input type="text" id="shopeeInput" placeholder="Ví dụ: https://shopee.vn/ten-san-pham..." oninput="toggleX()">
-        <i class="fas fa-times-circle clear-btn" id="clearBtn" onclick="clearInput()"></i>
+        <input type="text" id="shopeeInput" placeholder="Ví dụ: https://shopee.vn/ten-san-pham...">
     </div>
 
+    <button class="convert-btn" onclick="convertLink()">Tạo Link</button>
     <button class="convert-btn" onclick="convertLink()">
         <i class="fas fa-pencil-alt"></i>
         Tạo Link Ngay
     </button>
 
     <div class="result-box" id="resultBox">
+        <div id="affLink" class="link-wrapper"></div>
+        <button class="copy-btn" onclick="copyLink()">SAO CHÉP LINK</button>
+    </div>
         <div class="result-label">
             <i class="fas fa-check-circle"></i>
             Thành công! Bấm nút "Sao chép link" bên dưới:
         </div>
         <div class="link-wrapper" id="affLink"></div>
-        
         <button class="copy-btn" onclick="copyLink()">
             <i class="far fa-copy"></i> SAO CHÉP LINK
         </button>
-
-        <a href="#" id="goShopeeBtn" target="_blank" class="go-shopee-btn">
-            <i class="fas fa-shopping-bag"></i> ĐẾN SHOPEE NGAY
-        </a>
-
         <div id="goFbWrapper" style="display:none; margin-top:10px;">
-            <a href="https://www.facebook.com/share/p/17TctH8bAG/" target="_blank" class="fb-redirect-btn">
-                👉 Đi đến bài viết Facebook
-            </a>
-        </div>
+    <a href="https://www.facebook.com/share/p/17TctH8bAG/" target="_blank" class="fb-redirect-btn">
+        👉 Đi đến bài viết Facebook
+    </a>
+</div>
     </div>
 
+<!-- 🔥 TOAST -->
+<div id="toast">
+    <span>✅ Đã sao chép!</span>
+    <a href="https://www.facebook.com/share/p/17TctH8bAG/" target="_blank" class="toast-link">
+        Đi đến Facebook
+    </a>
     <div class="instructions-section">
         <div class="section-title">
             <i class="fas fa-book-reader"></i>
@@ -481,80 +529,126 @@
 </div>
 
 <script>
+fetch("https://shopee-resolve.onrender.com/ping");
+
+const MY_AFFILIATE_ID = "17365550406"; 
+const FIXED_SUB_ID = "test0"; 
     fetch("https://shopee-resolve.onrender.com/ping");
     const MY_AFFILIATE_ID = "17365550406"; 
     const FIXED_SUB_ID = "test0"; 
 
-    function toggleX() {
-        const input = document.getElementById('shopeeInput');
-        document.getElementById('clearBtn').style.display = input.value.length > 0 ? 'block' : 'none';
-    }
-
-    function clearInput() {
-        const input = document.getElementById('shopeeInput');
-        input.value = '';
-        toggleX();
-        input.focus();
-    }
-
+async function convertLink() {
+    let input = document.getElementById('shopeeInput').value.trim();
     async function convertLink() {
-        const inputField = document.getElementById('shopeeInput');
-        let input = inputField.value.trim();
-        const resultBox = document.getElementById('resultBox');
-        const affLinkDiv = document.getElementById('affLink');
+    const inputField = document.getElementById('shopeeInput');
+    let input = inputField.value.trim();
+    const resultBox = document.getElementById('resultBox');
+    const affLinkDiv = document.getElementById('affLink');
 
-        if (!input) {
-            alert("Vui lòng dán link Shopee vào nhé!");
-            return;
-        }
-
-        try {
-            affLinkDiv.innerText = "⏳ Đang xử lý link...";
-            resultBox.style.display = 'block';
-
-            const res = await fetch("https://shopee-resolve.onrender.com/resolve", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ url: input })
-            });
-
-            const data = await res.json();
-            if (!data.finalUrl) throw new Error();
-
-            // BƯỚC 1: Lấy link gốc từ server (Link này ĐÃ CÓ tên shop như 'opaanlp')
-            // CHỈ cắt bỏ phần tham số sau dấu '?' để làm sạch link
-            let cleanUrl = data.finalUrl.split('?')[0];
-
-            // BƯỚC 2: Mã hóa toàn bộ link sạch này
-            const encodedUrl = encodeURIComponent(cleanUrl);
-
-            // BƯỚC 3: Ghép vào cấu trúc an_redir GIỐNG HỆT mẫu thành công bạn gửi
-            // Thứ tự: origin_link -> share_channel_code -> affiliate_id -> sub_id
-            const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&share_channel_code=4&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
-
-            affLinkDiv.innerText = finalLink;
-
-        } catch (err) {
-            affLinkDiv.innerText = "❌ Không xử lý được link!";
-        }
+    if (!input) {
+        alert("Dán link Shopee vào!");
+        alert("Vui lòng dán link Shopee vào nhé!");
+        return;
     }
-    function copyLink() {
-        const affLinkDiv = document.getElementById('affLink');
-        const linkText = affLinkDiv.innerText || affLinkDiv.textContent;
-        if (!linkText || linkText.includes("⏳")) return;
 
-        navigator.clipboard.writeText(linkText).then(() => {
-            const toast = document.getElementById("toastCopy");
-            toast.style.display = "block";
-            setTimeout(() => { toast.style.display = "none"; }, 3000);
-            document.getElementById('goFbWrapper').style.display = 'block';
+    try {
+        affLinkDiv.innerText = "⏳ Đang xử lý...";
+        // 🔥 loading
+        affLinkDiv.innerText = "⏳ Đang xử lý link...";
+        resultBox.style.display = 'block';
+
+        // 🔥 GỌI BACKEND của bạn
+        const res = await fetch("https://shopee-resolve.onrender.com/resolve", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ url: input })
         });
-    }
-</script>
 
-<div id="toastCopy" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: white; padding: 15px 20px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); display: none; z-index: 9999; text-align: center;">
-    <div style="margin-bottom:10px; font-weight:600; color:#28a745;">✅ Đã sao chép link!</div>
-    <a href="https://www.facebook.com/share/p/17TctH8bAG/" target="_blank" style="display:inline-block; padding:8px 15px; background:#1877f2; color:white; border-radius:8px; text-decoration:none; font-size:14px; font-weight:600;">👉 Đi đến Facebook</a>
+        const data = await res.json();
+
+        if (!data.finalUrl) throw new Error();
+
+        const encodedUrl = encodeURIComponent(data.finalUrl);
+@@ -151,36 +464,58 @@ <h2 style="text-align:center;color:#ee4d2d">Tạo Link Shopee</h2>
+
+        affLinkDiv.innerText = finalLink;
+
+    } catch {
+        affLinkDiv.innerText = "❌ Lỗi xử lý link!";
+    } catch (err) {
+        affLinkDiv.innerText = "❌ Không xử lý được link!";
+    }
+}
+
+function copyLink() {
+    function copyLink() {
+    const linkText = document.getElementById('affLink').innerText;
+    if (!linkText) return;
+
+    navigator.clipboard.writeText(linkText)
+    .then(() => {
+        showToast();
+    })
+    .catch(() => {
+        alert("Không copy được!");
+    });
+}
+
+function showToast() {
+    const toast = document.getElementById("toast");
+    navigator.clipboard.writeText(linkText).then(() => {
+        const toast = document.getElementById("toastCopy");
+toast.style.display = "block";
+
+    toast.style.display = "flex";
+    setTimeout(() => toast.style.opacity = "1", 10);
+// tự ẩn sau 3 giây
+setTimeout(() => {
+    toast.style.display = "none";
+}, 3000);
+
+    setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.style.display = "none", 300);
+    }, 5000);
+        // 🔥 hiện nút Facebook
+        document.getElementById('goFbWrapper').style.display = 'block';
+    });
+}
+</script>
+<div id="toastCopy" style="
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    display: none;
+    z-index: 9999;
+    text-align: center;
+">
+    <div style="margin-bottom:10px; font-weight:600; color:#28a745;">
+        ✅ Đã sao chép link!
+    </div>
+
+    <a href="https://www.facebook.com/share/p/17TctH8bAG/" target="_blank" 
+       style="
+        display:inline-block;
+        padding:8px 15px;
+        background:#1877f2;
+        color:white;
+        border-radius:8px;
+        text-decoration:none;
+        font-size:14px;
+        font-weight:600;
+       ">
+        👉 Đi đến Facebook
+    </a>
 </div>
 </body>
 </html>
