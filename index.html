@@ -523,29 +523,28 @@
             const data = await res.json();
             if (!data.finalUrl) throw new Error();
 
-            // BƯỚC 1: Làm sạch link và lấy cấu trúc chuẩn nhất
+            // 1. Lấy link sạch không có tham số ?
             let cleanUrl = data.finalUrl.split('?')[0]; 
-            
-            // BƯỚC 2: Xử lý lỗi "/product/". 
-            // Nếu server trả về link có chữ /product/, ta chuyển nó về dạng link rút gọn hoặc link shop
-            // Đây là mẹo để Shopee không chặn hoa hồng của bạn
+
+            // 2. XỬ LÝ QUAN TRỌNG: Loại bỏ chữ /product/ để link hợp lệ
+            // Thay vì dùng universal-link, ta chuyển đổi /product/ thành /i/ 
+            // Hoặc giữ nguyên ID Shop và ID Sản phẩm (Shopee vẫn nhận diện được hoa hồng)
             if (cleanUrl.includes("shopee.vn/product/")) {
-                cleanUrl = cleanUrl.replace("shopee.vn/product/", "shopee.vn/universal-link/");
+                cleanUrl = cleanUrl.replace("shopee.vn/product/", "shopee.vn/i/");
             }
 
             const encodedUrl = encodeURIComponent(cleanUrl);
             
-            // BƯỚC 3: Ghép đúng cấu trúc giống link mẫu thành công bạn gửi
-            // Thêm share_channel_code=4 để hệ thống tin cậy hơn
+            // 3. Ghép đúng cấu trúc 3 mẫu thành công bạn gửi
+            // Dùng share_channel_code=4 để định danh "Copy Link"
             const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&share_channel_code=4&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
 
-            // Hiển thị kết quả
             affLinkDiv.innerHTML = `<a href="${finalLink}" target="_blank">${finalLink}</a>`;
             goShopeeBtn.href = finalLink;
             goShopeeBtn.style.display = 'flex';
 
         } catch (err) {
-            affLinkDiv.innerText = "❌ Lỗi: Link không được Shopee hỗ trợ!";
+            affLinkDiv.innerText = "❌ Lỗi: Link không được hỗ trợ!";
         }
     }
 
