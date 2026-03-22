@@ -1,12 +1,103 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kèo Thơm - Tạo Link Shopee</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+body { 
+    font-family: system-ui;
+    background-color: #f7b7a3; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; 
+}
+
+.container { 
+    background: white; 
+    padding: 35px; 
+    border-radius: 24px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+    max-width: 600px; 
+    width: 100%;
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+}
+
+.convert-btn {
+    width: 100%;
+    padding: 15px;
+    background: #ee4d2d;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.result-box {
+    margin-top: 20px;
+    display: none;
+}
+
+.link-wrapper {
+    background: #f1f1f1;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
+    word-break: break-all;
+}
+
+.copy-btn {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #1877f2;
+    background: white;
+    color: #1877f2;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* 🔥 TOAST */
+#toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    z-index: 9999;
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.toast-link {
+    color: #4da6ff;
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chốt Kèo Thơm Cùng PM - Tạo Link Shopee</title>
+    <title>Kèo Thơm - Tạo Link Shopee</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* CSS CHÍNH - GIAO DIỆN CHUNG */
+        
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             background-color: #f7b7a3; 
@@ -134,26 +225,26 @@
             font-size: 14px;
         }
 
-        /* NÚT SAO CHÉP - CẬP NHẬT THEO YÊU CẦU */
+        /* NÚT SAO CHÉP */
         .copy-btn { 
             width: 100%; 
             padding: 12px; 
-            background-color: white; /* Nền trắng */
-            color: #1877f2; /* Chữ xanh dương Facebook */
-            border: 2px solid #1877f2; /* Viền xanh */
+            background-color: white;
+            color: #1877f2;
+            border: 2px solid #1877f2;
             border-radius: 8px; 
             font-size: 14px; 
             cursor: pointer; 
             font-weight: 600;
-            transition: all 0.3s ease; /* Hiệu ứng mượt */
+            transition: all 0.3s ease;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 8px;
         }
         .copy-btn:hover {
-            background-color: #1877f2; /* Nền xanh dương khi đưa chuột vào */
-            color: white; /* Chữ trắng khi đưa chuột vào */
+            background-color: #1877f2;
+            color: white;
         }
 
         /* PHẦN HƯỚNG DẪN */
@@ -292,7 +383,6 @@
             padding-top: 20px;
             text-align: center;
         }
-        .social-title { color: #333; font-weight: bold; margin-bottom: 15px; }
         .social-btn {
             display: inline-flex;
             align-items: center;
@@ -307,14 +397,19 @@
             transition: opacity 0.3s;
         }
         .social-btn:hover { opacity: 0.8; }
+        .btn-group { background-color: #4267B2; }
         .btn-fb { background-color: #1877f2; }
         .btn-zalo { background-color: #0068ff; }
 
     </style>
 </head>
+
 <body>
 
 <div class="container">
+    <h2 style="text-align:center;color:#ee4d2d">Tạo Link Shopee</h2>
+
+    <input type="text" id="shopeeInput" placeholder="Dán link Shopee...">
     <div class="header">
         <i class="fas fa-magic"></i>
         <h1>Tạo Link Shopee</h1>
@@ -329,12 +424,16 @@
         <input type="text" id="shopeeInput" placeholder="Ví dụ: https://shopee.vn/ten-san-pham...">
     </div>
 
+    <button class="convert-btn" onclick="convertLink()">Tạo Link</button>
     <button class="convert-btn" onclick="convertLink()">
         <i class="fas fa-pencil-alt"></i>
         Tạo Link Ngay
     </button>
 
     <div class="result-box" id="resultBox">
+        <div id="affLink" class="link-wrapper"></div>
+        <button class="copy-btn" onclick="copyLink()">SAO CHÉP LINK</button>
+    </div>
         <div class="result-label">
             <i class="fas fa-check-circle"></i>
             Thành công! Bấm nút "Sao chép link" bên dưới:
@@ -343,8 +442,19 @@
         <button class="copy-btn" onclick="copyLink()">
             <i class="far fa-copy"></i> SAO CHÉP LINK
         </button>
+        <div id="goFbWrapper" style="display:none; margin-top:10px;">
+    <a href="https://www.facebook.com/share/p/17TctH8bAG/" target="_blank" class="fb-redirect-btn">
+        👉 Đi đến bài viết Facebook
+    </a>
+</div>
     </div>
 
+<!-- 🔥 TOAST -->
+<div id="toast">
+    <span>✅ Đã sao chép!</span>
+    <a href="https://www.facebook.com/share/p/17TctH8bAG/" target="_blank" class="toast-link">
+        Đi đến Facebook
+    </a>
     <div class="instructions-section">
         <div class="section-title">
             <i class="fas fa-book-reader"></i>
@@ -373,7 +483,7 @@
                     <i class="fab fa-facebook step-icon"></i>
                     <span class="step-number">3</span>
                 </div>
-                <p class="step-text"><strong>Bình luận</strong> đường link bạn vừa copy vào <a href="https://www.facebook.com/ChotKeoThomcungPM" target="_blank">bài đăng</a> ở nút bên dưới.</p>
+                <p class="step-text"><strong>Bình luận</strong> đường link bạn vừa copy vào <a href="https://www.facebook.com/share/p/17TctH8bAG/" target="_blank">bài đăng</a> ở nút bên dưới.</p>
             </div>
 
             <div class="step-item">
@@ -386,7 +496,7 @@
         </div>
 
         <div class="fb-btn-wrapper">
-            <a href="https://www.facebook.com/ChotKeoThomcungPM" target="_blank" class="fb-redirect-btn">
+            <a href="https://www.facebook.com/share/p/17TctH8bAG/" target="_blank" class="fb-redirect-btn">
                 <i class="fab fa-facebook-f"></i>
                 Đến bài đăng Facebook
             </a>
@@ -406,49 +516,139 @@
     </div>
 
     <div class="social-links">
-        <div class="social-title">📌 Tham gia cộng đồng săn sale cùng PM:</div>
-        <a href="https://www.facebook.com/ChotKeoThomcungPM" target="_blank" class="social-btn btn-fb">
-            <i class="fab fa-facebook-f"></i> Fanpage PM
-        </a>
         <a href="https://www.facebook.com/groups/958595413179217" target="_blank" class="social-btn btn-group">
             <i class="fas fa-users"></i> Group Săn Sale
         </a>
+        <a href="https://www.facebook.com/ChotKeoThomcungPM" target="_blank" class="social-btn btn-fb">
+            <i class="fab fa-facebook-f"></i> Fanpage
+        </a>
         <a href="https://zalo.me/g/vhorzb302" target="_blank" class="social-btn btn-zalo">
-            <i class="fas fa-comments"></i> Nhóm Zalo
+            <i class="fas fa-comments"></i> Group Zalo
         </a>
     </div>
 </div>
 
 <script>
+fetch("https://shopee-resolve.onrender.com/ping");
+
+const MY_AFFILIATE_ID = "17365550406"; 
+const FIXED_SUB_ID = "test0"; 
+    fetch("https://shopee-resolve.onrender.com/ping");
     const MY_AFFILIATE_ID = "17365550406"; 
-    const FIXED_SUB_ID = "test1"; 
+    const FIXED_SUB_ID = "test0"; 
 
-    function convertLink() {
-        const input = document.getElementById('shopeeInput').value.trim();
-        if (!input) {
-            alert("Vui lòng dán link sản phẩm Shopee trước nhé!");
-            return;
-        }
+async function convertLink() {
+    let input = document.getElementById('shopeeInput').value.trim();
+    async function convertLink() {
+    const inputField = document.getElementById('shopeeInput');
+    let input = inputField.value.trim();
+    const resultBox = document.getElementById('resultBox');
+    const affLinkDiv = document.getElementById('affLink');
 
-        const encodedUrl = encodeURIComponent(input);
-        const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
-
-        document.getElementById('affLink').innerText = finalLink;
-        document.getElementById('resultBox').style.display = 'block';
-        document.getElementById('resultBox').scrollIntoView({behavior: 'smooth'});
+    if (!input) {
+        alert("Dán link Shopee vào!");
+        alert("Vui lòng dán link Shopee vào nhé!");
+        return;
     }
 
-    function copyLink() {
-        const linkText = document.getElementById('affLink').innerText;
-        if (!linkText) return;
-        
-        navigator.clipboard.writeText(linkText).then(() => {
-            alert("Đã sao chép link thành công! Giờ hãy đi bình luận để săn mã nhé.");
-        }).catch(err => {
-            alert("Lỗi khi sao chép link. Bạn vui lòng tự bôi đen và copy nhé.");
+    try {
+        affLinkDiv.innerText = "⏳ Đang xử lý...";
+        // 🔥 loading
+        affLinkDiv.innerText = "⏳ Đang xử lý link...";
+        resultBox.style.display = 'block';
+
+        // 🔥 GỌI BACKEND của bạn
+        const res = await fetch("https://shopee-resolve.onrender.com/resolve", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ url: input })
         });
-    }
-</script>
 
+        const data = await res.json();
+
+        if (!data.finalUrl) throw new Error();
+
+        const encodedUrl = encodeURIComponent(data.finalUrl);
+@@ -151,36 +464,58 @@ <h2 style="text-align:center;color:#ee4d2d">Tạo Link Shopee</h2>
+
+        affLinkDiv.innerText = finalLink;
+
+    } catch {
+        affLinkDiv.innerText = "❌ Lỗi xử lý link!";
+    } catch (err) {
+        affLinkDiv.innerText = "❌ Không xử lý được link!";
+    }
+}
+
+function copyLink() {
+    function copyLink() {
+    const linkText = document.getElementById('affLink').innerText;
+    if (!linkText) return;
+
+    navigator.clipboard.writeText(linkText)
+    .then(() => {
+        showToast();
+    })
+    .catch(() => {
+        alert("Không copy được!");
+    });
+}
+
+function showToast() {
+    const toast = document.getElementById("toast");
+    navigator.clipboard.writeText(linkText).then(() => {
+        const toast = document.getElementById("toastCopy");
+toast.style.display = "block";
+
+    toast.style.display = "flex";
+    setTimeout(() => toast.style.opacity = "1", 10);
+// tự ẩn sau 3 giây
+setTimeout(() => {
+    toast.style.display = "none";
+}, 3000);
+
+    setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.style.display = "none", 300);
+    }, 5000);
+        // 🔥 hiện nút Facebook
+        document.getElementById('goFbWrapper').style.display = 'block';
+    });
+}
+</script>
+<div id="toastCopy" style="
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    display: none;
+    z-index: 9999;
+    text-align: center;
+">
+    <div style="margin-bottom:10px; font-weight:600; color:#28a745;">
+        ✅ Đã sao chép link!
+    </div>
+
+    <a href="https://www.facebook.com/share/p/17TctH8bAG/" target="_blank" 
+       style="
+        display:inline-block;
+        padding:8px 15px;
+        background:#1877f2;
+        color:white;
+        border-radius:8px;
+        text-decoration:none;
+        font-size:14px;
+        font-weight:600;
+       ">
+        👉 Đi đến Facebook
+    </a>
+</div>
 </body>
 </html>
