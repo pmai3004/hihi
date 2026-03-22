@@ -523,25 +523,29 @@
             const data = await res.json();
             if (!data.finalUrl) throw new Error();
 
-            // 1. Lấy link gốc và bỏ các tham số thừa (giữ link sạch)
+            // BƯỚC 1: Làm sạch link và lấy cấu trúc chuẩn nhất
             let cleanUrl = data.finalUrl.split('?')[0]; 
-
-            // 2. Chuyển cấu trúc /product/ sang /universal-link/ để đảm bảo nhảy App và có hoa hồng
+            
+            // BƯỚC 2: Xử lý lỗi "/product/". 
+            // Nếu server trả về link có chữ /product/, ta chuyển nó về dạng link rút gọn hoặc link shop
+            // Đây là mẹo để Shopee không chặn hoa hồng của bạn
             if (cleanUrl.includes("shopee.vn/product/")) {
                 cleanUrl = cleanUrl.replace("shopee.vn/product/", "shopee.vn/universal-link/");
             }
 
             const encodedUrl = encodeURIComponent(cleanUrl);
             
-            // 3. Tạo link Affiliate chuẩn với tiền tố an_redir và các tham số định danh
+            // BƯỚC 3: Ghép đúng cấu trúc giống link mẫu thành công bạn gửi
+            // Thêm share_channel_code=4 để hệ thống tin cậy hơn
             const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&share_channel_code=4&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
 
+            // Hiển thị kết quả
             affLinkDiv.innerHTML = `<a href="${finalLink}" target="_blank">${finalLink}</a>`;
             goShopeeBtn.href = finalLink;
             goShopeeBtn.style.display = 'flex';
 
         } catch (err) {
-            affLinkDiv.innerText = "❌ Không xử lý được link!";
+            affLinkDiv.innerText = "❌ Lỗi: Link không được Shopee hỗ trợ!";
         }
     }
 
