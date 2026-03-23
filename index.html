@@ -22,6 +22,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kèo Thơm - Tạo Link Shopee</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    #clearBtn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 16px;
+    color: #999;
+    display: none;
+}
+
+#clearBtn:hover {
+    color: #ee4d2d;
+}
     <style>
         /* CSS CHÍNH - GIAO DIỆN CHUNG */
         
@@ -142,15 +156,19 @@
         }
         .result-label i { margin-right: 8px; }
         .link-wrapper {
-            background-color: white;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
-            word-break: break-all;
-            margin-bottom: 15px;
-            color: #0056b3;
-            font-size: 14px;
-        }
+    display: block;
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 15px;
+    color: #0056b3;
+    font-size: 14px;
+
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
 
         /* NÚT SAO CHÉP */
         .copy-btn { 
@@ -339,22 +357,13 @@
         <span class="sub-tag">Kèo Thơm Mỗi Ngày</span>
     </div>
     
-    <div class="input-group" style="position:relative;">
+    <div class="input-group" style="position: relative;">
         <label class="input-label">
             <i class="fas fa-link"></i>
             Dán link sản phẩm Shopee vào đây
         </label>
         <input type="text" id="shopeeInput" placeholder="Ví dụ: https://shopee.vn/ten-san-pham...">
-        <span id="clearBtn" onclick="clearInput()" style="
-    position:absolute;
-    right:15px;
-    top:50%;
-    transform:translateY(-50%);
-    cursor:pointer;
-    font-size:18px;
-    color:#999;
-    display:none;
-">✖</span>
+        <span id="clearBtn" onclick="clearInput()">✖</span>
     </div>
 
     <button class="convert-btn" onclick="convertLink()">
@@ -503,6 +512,7 @@ function clearInput() {
 
         affLinkDiv.innerText = "⏳ Đang xử lý link...";
         affLinkDiv.removeAttribute("href");
+        affLinkDiv.style.pointerEvents = "none";
 
         const res = await fetch("https://shopee-resolve.onrender.com/resolve", {
             method: "POST",
@@ -523,6 +533,7 @@ function clearInput() {
         // hiển thị link
         affLinkDiv.innerText = finalLink;
         affLinkDiv.href = finalLink;
+        affLinkDiv.style.pointerEvents = "auto";
 
         // hiện thành công
         successText.style.display = "flex";
