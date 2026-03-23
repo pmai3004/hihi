@@ -339,12 +339,22 @@
         <span class="sub-tag">Kèo Thơm Mỗi Ngày</span>
     </div>
     
-    <div class="input-group">
+    <div class="input-group" style="position:relative;">
         <label class="input-label">
             <i class="fas fa-link"></i>
             Dán link sản phẩm Shopee vào đây
         </label>
         <input type="text" id="shopeeInput" placeholder="Ví dụ: https://shopee.vn/ten-san-pham...">
+        <span id="clearBtn" onclick="clearInput()" style="
+    position:absolute;
+    right:15px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    font-size:18px;
+    color:#999;
+    display:none;
+">✖</span>
     </div>
 
     <button class="convert-btn" onclick="convertLink()">
@@ -353,14 +363,27 @@
     </button>
 
     <div class="result-box" id="resultBox">
-        <div class="result-label">
+        <div class="result-label" id="successText" style="display:none;">
             <i class="fas fa-check-circle"></i>
             Thành công! Bấm nút "Sao chép link" bên dưới:
         </div>
-        <div class="link-wrapper" id="affLink"></div>
+        <a class="link-wrapper" id="affLink" target="_blank"></a>
         <button class="copy-btn" onclick="copyLink()">
             <i class="far fa-copy"></i> SAO CHÉP LINK
         </button>
+        <a id="goShopeeBtn" target="_blank" style="
+    display:none;
+    margin-top:10px;
+    text-align:center;
+    padding:12px;
+    background:#ee4d2d;
+    color:white;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:600;
+">
+    🛒 Đến Shopee ngay
+</a>
         <div id="goFbWrapper" style="display:none; margin-top:10px;">
     <a href="https://www.facebook.com/share/p/17TctH8bAG/" target="_blank" class="fb-redirect-btn">
         👉 Đi đến bài viết Facebook
@@ -445,12 +468,27 @@
     fetch("https://shopee-resolve.onrender.com/ping");
     const MY_AFFILIATE_ID = "17365550406"; 
     const FIXED_SUB_ID = "test0"; 
+    const inputField = document.getElementById('shopeeInput');
+const clearBtn = document.getElementById('clearBtn');
+
+inputField.addEventListener('input', () => {
+    clearBtn.style.display = inputField.value ? 'block' : 'none';
+});
+
+function clearInput() {
+    inputField.value = "";
+    clearBtn.style.display = "none";
+    inputField.focus();
+}
 
     async function convertLink() {
     const inputField = document.getElementById('shopeeInput');
     let input = inputField.value.trim();
+
     const resultBox = document.getElementById('resultBox');
     const affLinkDiv = document.getElementById('affLink');
+    const successText = document.getElementById('successText');
+    const goShopeeBtn = document.getElementById('goShopeeBtn');
 
     if (!input) {
         alert("Vui lòng dán link Shopee vào nhé!");
@@ -458,11 +496,14 @@
     }
 
     try {
-        // 🔥 loading
-        affLinkDiv.innerText = "⏳ Đang xử lý link...";
+        // reset UI
         resultBox.style.display = 'block';
+        successText.style.display = 'none';
+        goShopeeBtn.style.display = 'none';
 
-        // 🔥 GỌI BACKEND của bạn
+        affLinkDiv.innerText = "⏳ Đang xử lý link...";
+        affLinkDiv.removeAttribute("href");
+
         const res = await fetch("https://shopee-resolve.onrender.com/resolve", {
             method: "POST",
             headers: {
@@ -479,26 +520,39 @@
 
         const finalLink = `https://s.shopee.vn/an_redir?origin_link=${encodedUrl}&affiliate_id=${MY_AFFILIATE_ID}&sub_id=${FIXED_SUB_ID}`;
 
+        // hiển thị link
         affLinkDiv.innerText = finalLink;
+        affLinkDiv.href = finalLink;
+
+        // hiện thành công
+        successText.style.display = "flex";
+
+        // hiện nút shopee
+        goShopeeBtn.style.display = "block";
+        goShopeeBtn.href = finalLink;
 
     } catch (err) {
         affLinkDiv.innerText = "❌ Không xử lý được link!";
+        affLinkDiv.removeAttribute("href");
     }
 }
     function copyLink() {
     const linkText = document.getElementById('affLink').innerText;
-    if (!linkText) return;
+
+    // 🔥 chặn copy khi chưa xong
+    if (!linkText || linkText.includes("Đang xử lý")) {
+        alert("Link chưa sẵn sàng!");
+        return;
+    }
 
     navigator.clipboard.writeText(linkText).then(() => {
         const toast = document.getElementById("toastCopy");
-toast.style.display = "block";
+        toast.style.display = "block";
 
-// tự ẩn sau 3 giây
-setTimeout(() => {
-    toast.style.display = "none";
-}, 3000);
+        setTimeout(() => {
+            toast.style.display = "none";
+        }, 3000);
 
-        // 🔥 hiện nút Facebook
         document.getElementById('goFbWrapper').style.display = 'block';
     });
 }
